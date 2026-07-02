@@ -1,18 +1,41 @@
 #include "rename_executor.h"
-#include <filesystem>
 #include <iostream>
+#include <windows.h>
 #include <unordered_map>
 
-namespace fs = std::filesystem;
+namespace {
+std::string getParentPath(const std::string& path) {
+    const std::size_t pos = path.find_last_of("\\/");
+    if (pos == std::string::npos) {
+        return "";
+    }
+    return path.substr(0, pos);
+}
+
+std::string joinPath(const std::string& base, const std::string& name) {
+    if (base.empty()) {
+        return name;
+    }
+    const char last = base.back();
+    if (last == '\\' || last == '/') {
+        return base + name;
+    }
+    return base + "\\" + name;
+}
+
+bool pathExists(const std::string& path) {
+    return GetFileAttributesA(path.c_str()) != INVALID_FILE_ATTRIBUTES;
+}
+}
 
 int RenameExecutor::detectConflicts(const std::vector<std::pair<FileEntry, std::string>>& renamePairs) const {
     int conflictCount = 0;
     std::unordered_map<std::string, int> targetCounts;
 
     for (const auto& pair : renamePairs) {
-        const fs::path sourcePath(pair.first.path);
-        const fs::path targetPath = sourcePath.parent_path() / pair.second;
-        const std::string targetKey = targetPath.lexically_normal().string();
+        const std::string sourcePath = pair.first.path;
+        const std::string targetPath = joinPath(getParentPath(sourcePath), pair.second);
+        const std::string targetKey = targetPath;
 
         targetCounts[targetKey]++;
         if (targetCounts[targetKey] > 1) {
@@ -23,7 +46,7 @@ int RenameExecutor::detectConflicts(const std::vector<std::pair<FileEntry, std::
             continue;
         }
 
-        if (fs::exists(targetPath)) {
+        if (pathExists(targetPath)) {
             conflictCount++;
         }
     }
@@ -51,8 +74,8 @@ std::vector<RenameResult> RenameExecutor::execute(const std::vector<std::pair<Fi
         result.oldPath = pair.first.path;
         result.newPath = pair.second;
 
-        const fs::path sourcePath(pair.first.path);
-        const fs::path targetPath = sourcePath.parent_path() / pair.second;
+        const std::string sourcePath = pair.first.path;
+        const std::string targetPath = joinPath(getParentPath(sourcePath), pair.second);
 
         if (targetPath == sourcePath) {
             result.success = true;
@@ -61,18 +84,17 @@ std::vector<RenameResult> RenameExecutor::execute(const std::vector<std::pair<Fi
             continue;
         }
 
-        try {
-            fs::rename(sourcePath, targetPath);
+        if (MoveFileExA(sourcePath.c_str(), targetPath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
             result.success = true;
             std::cout << "Renamed: " << pair.first.filename << " -> " << pair.second << std::endl;
-        } catch (const fs::filesystem_error& ex) {
+        } else {
             result.success = false;
-            result.errorMessage = ex.what();
-            std::cerr << "Failed: " << pair.first.filename << " - " << ex.what() << std::endl;
+            result.errorMessage = "Win32 error code: " + std::to_string(GetLastError());
+            std::cerr << "Failed: " << pair.first.filename << " - " << result.errorMessage << std::endl;
         }
-        
+
         results.push_back(result);
     }
-    
+
     return results;
 }

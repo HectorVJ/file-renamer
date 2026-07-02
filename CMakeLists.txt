@@ -3,8 +3,7 @@ project(file-renamer)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include_directories(${CMAKE_SOURCE_DIR}/include)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(file-renamer
     src/main.cpp
@@ -15,3 +14,5 @@ add_executable(file-renamer
     src/rename_executor.cpp
     src/report_writer.cpp
 )
+
+target_include_directories(file-renamer PRIVATE ${CMAKE_SOURCE_DIR}/include)

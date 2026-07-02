@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build file-renamer",
+            "command": "d:\\mingw64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=c++17",
+                "-I",
+                "${workspaceFolder}\\include",
+                "${workspaceFolder}\\src\\main.cpp",
+                "${workspaceFolder}\\src\\cli.cpp",
+                "${workspaceFolder}\\src\\file_scanner.cpp",
+                "${workspaceFolder}\\src\\file_filter.cpp",
+                "${workspaceFolder}\\src\\rename_rule.cpp",
+                "${workspaceFolder}\\src\\rename_executor.cpp",
+                "${workspaceFolder}\\src\\report_writer.cpp",
+                "-o",
+                "${workspaceFolder}\\build\\file-renamer.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Build the full file-renamer project with g++."
+        }
+    ]
+}

@@ -4,3 +4,4 @@ build/
 *.obj
 *.pdb
 .DS_Store
+rename_report.md
