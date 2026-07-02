@@ -9,4 +9,5 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(file-renamer
     src/main.cpp
     src/cli.cpp
+    src/file_scanner.cpp
 )

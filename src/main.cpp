@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "file_scanner.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
@@ -17,11 +18,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Input directory: " << options.inputDir << std::endl;
-    std::cout << "Mode: " << (options.previewMode ? "preview" : "execute") << std::endl;
-    if (!options.extensionFilter.empty()) {
-        std::cout << "Extension filter: " << options.extensionFilter << std::endl;
+    FileScanner scanner(options.inputDir);
+    std::vector<FileEntry> files;
+    
+    if (!scanner.scan(files)) {
+        std::cerr << "Error: " << scanner.getLastError() << std::endl;
+        return 1;
     }
+
+    std::cout << "Scan completed. Total files found: " << files.size() << std::endl;
 
     return 0;
 }
