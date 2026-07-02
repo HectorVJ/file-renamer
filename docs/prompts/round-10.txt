@@ -1,0 +1,2 @@
+Round 10: Runtime fixes and README update
+Prompt: Complete the missing runtime behavior by wiring keyword filtering into CLI parsing, fixing rename conflict detection, adding numeric argument validation, and updating the README.

@@ -1,0 +1,2 @@
+Round 11: MinGW compatibility
+Prompt: Make the project runnable in the local MinGW 8.1 environment by removing the broken filesystem dependency path, adding IDE build configuration, and documenting an executable build workflow.

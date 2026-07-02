@@ -1,2 +1,2 @@
 Round 2: CLI argument parsing
-Prompt: 请在当前 C++ 项目中增加命令行参数解析。要求：1. 支持输入目录路径参数 2. 支持预览模式和执行模式参数 3. 支持扩展名筛选参数 4. 参数缺失时打印清晰提示 5. 暂时不要实现具体重命名逻辑，只完成参数校验
+Prompt: Add CLI argument parsing for input directory, preview/execute mode, and extension filtering, with clear validation errors.

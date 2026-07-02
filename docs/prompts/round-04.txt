@@ -1,2 +1,2 @@
 Round 4: File filtering
-Prompt: 请为当前工具增加文件筛选能力。要求：1. 支持按扩展名筛选文件 2. 支持按文件名关键字筛选文件 3. 只保留符合条件的文件参与后续处理 4. 保持逻辑清晰，便于扩展
+Prompt: Add file filtering by extension and filename keyword so only matching files continue into the rename flow.

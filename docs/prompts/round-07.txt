@@ -1,0 +1,2 @@
+Round 7: Project documentation and samples
+Prompt: Add README usage documentation, sample files, and a basic .gitignore for local C++ build artifacts.

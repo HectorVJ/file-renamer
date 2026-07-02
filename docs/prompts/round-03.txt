@@ -1,2 +1,2 @@
 Round 3: File scanning
-Prompt: 请在当前 C++ 项目中实现目录扫描功能。要求：1. 校验输入目录是否存在 2. 只扫描普通文件 3. 输出扫描到的文件数量 4. 对非法目录给出清晰错误提示 5. 尽量使用标准库实现
+Prompt: Implement directory scanning with validation for missing or invalid paths and count regular files only.

@@ -1,0 +1,2 @@
+Round 5: Rename rules
+Prompt: Add rename rules for prefix, suffix, keyword replacement, sequential numbering, and preview mapping while preserving file extensions.

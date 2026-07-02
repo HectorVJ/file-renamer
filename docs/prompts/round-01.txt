@@ -1,2 +1,2 @@
 Round 1: Initialize file-renamer project
-Prompt: 请使用 C++ 帮我初始化一个命令行项目，项目名称为 file-renamer。要求：1. 生成 CMakeLists.txt 2. 生成 src/ 和 include/ 基础目录结构 3. main.cpp 先只打印基础帮助信息 4. 保持代码简洁，便于后续扩展
+Prompt: Initialize a C++ command-line project named file-renamer with CMake, base src/include structure, and a simple help message in main.cpp.

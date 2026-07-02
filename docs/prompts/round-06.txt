@@ -1,0 +1,2 @@
+Round 6: Rename execution and report
+Prompt: Add conflict detection, preview result objects, execute-mode renaming, and markdown report export to the file-renamer workflow.
