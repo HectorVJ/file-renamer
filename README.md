@@ -19,6 +19,7 @@ Options:
   --preview       Preview rename results without executing
   --execute       Execute actual rename operations
   --ext <ext>     Filter by extension (e.g., txt)
+  --keyword <str> Filter filenames by keyword
   --prefix <str>  Add prefix to filenames
   --suffix <str>  Add suffix to filenames
   --replace <old> Replace keyword in filenames
@@ -43,4 +44,9 @@ Execute mode:
 Replace keyword:
 ```
 ./file-renamer --input sample/demo_files --preview --replace old --with new
+```
+
+Filter by keyword:
+```
+./file-renamer --input sample/demo_files --preview --keyword demo --suffix _done
 ```

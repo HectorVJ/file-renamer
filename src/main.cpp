@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
 
     FileFilter filter;
     filter.setExtensionFilter(options.extensionFilter);
+    filter.setKeywordFilter(options.keywordFilter);
     std::vector<FileEntry> filteredFiles = filter.apply(files);
     
     std::cout << "Files after filter: " << filteredFiles.size() << std::endl;

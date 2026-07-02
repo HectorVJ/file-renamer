@@ -8,6 +8,7 @@ struct CliOptions {
     bool previewMode = false;
     bool executeMode = false;
     std::string extensionFilter;
+    std::string keywordFilter;
     std::string prefix;
     std::string suffix;
     std::string replaceFrom;

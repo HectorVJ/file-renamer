@@ -1,6 +1,7 @@
 #include "cli.h"
+#include <exception>
 #include <iostream>
-#include <cstring>
+#include <string>
 
 void printUsage(const char* programName) {
     std::cout << "Usage: " << programName << " [options]\n"
@@ -10,6 +11,7 @@ void printUsage(const char* programName) {
               << "  --preview       Preview rename results without executing\n"
               << "  --execute       Execute actual rename operations\n"
               << "  --ext <ext>     Filter by extension (e.g., txt)\n"
+              << "  --keyword <str> Filter filenames by keyword\n"
               << "  --prefix <str>  Add prefix to filenames\n"
               << "  --suffix <str>  Add suffix to filenames\n"
               << "  --replace <old> Replace keyword in filenames\n"
@@ -39,6 +41,9 @@ bool parseArguments(int argc, char* argv[], CliOptions& options) {
         else if (arg == "--ext" && i + 1 < argc) {
             options.extensionFilter = argv[++i];
         }
+        else if (arg == "--keyword" && i + 1 < argc) {
+            options.keywordFilter = argv[++i];
+        }
         else if (arg == "--prefix" && i + 1 < argc) {
             options.prefix = argv[++i];
         }
@@ -55,10 +60,26 @@ bool parseArguments(int argc, char* argv[], CliOptions& options) {
             options.enableNumbering = true;
         }
         else if (arg == "--start" && i + 1 < argc) {
-            options.startNumber = std::stoi(argv[++i]);
+            try {
+                options.startNumber = std::stoi(argv[++i]);
+            } catch (const std::exception&) {
+                std::cerr << "Error: --start must be a valid integer" << std::endl;
+                return false;
+            }
         }
         else if (arg == "--width" && i + 1 < argc) {
-            options.numberWidth = std::stoi(argv[++i]);
+            try {
+                options.numberWidth = std::stoi(argv[++i]);
+            } catch (const std::exception&) {
+                std::cerr << "Error: --width must be a valid integer" << std::endl;
+                return false;
+            }
+        }
+        else if ((arg == "--input") || (arg == "--ext") || (arg == "--keyword") ||
+                 (arg == "--prefix") || (arg == "--suffix") || (arg == "--replace") ||
+                 (arg == "--with") || (arg == "--start") || (arg == "--width")) {
+            std::cerr << "Error: Missing value for option " << arg << std::endl;
+            return false;
         }
         else if (arg[0] == '-') {
             std::cerr << "Unknown option: " << arg << std::endl;
@@ -81,8 +102,16 @@ bool validateOptions(const CliOptions& options) {
         std::cerr << "Error: Cannot use both --preview and --execute modes together" << std::endl;
         return false;
     }
+    if (!options.replaceTo.empty() && options.replaceFrom.empty()) {
+        std::cerr << "Error: --replace parameter is required when using --with" << std::endl;
+        return false;
+    }
     if (!options.replaceFrom.empty() && options.replaceTo.empty()) {
         std::cerr << "Error: --with parameter is required when using --replace" << std::endl;
+        return false;
+    }
+    if (options.enableNumbering && options.numberWidth <= 0) {
+        std::cerr << "Error: --width must be greater than 0" << std::endl;
         return false;
     }
     return true;

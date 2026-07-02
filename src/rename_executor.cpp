@@ -1,17 +1,33 @@
 #include "rename_executor.h"
 #include <filesystem>
 #include <iostream>
+#include <unordered_map>
 
 namespace fs = std::filesystem;
 
 int RenameExecutor::detectConflicts(const std::vector<std::pair<FileEntry, std::string>>& renamePairs) const {
     int conflictCount = 0;
+    std::unordered_map<std::string, int> targetCounts;
+
     for (const auto& pair : renamePairs) {
-        std::string fullNewPath = fs::path(pair.first.path).parent_path().string() + "/" + pair.second;
-        if (fs::exists(fullNewPath)) {
+        const fs::path sourcePath(pair.first.path);
+        const fs::path targetPath = sourcePath.parent_path() / pair.second;
+        const std::string targetKey = targetPath.lexically_normal().string();
+
+        targetCounts[targetKey]++;
+        if (targetCounts[targetKey] > 1) {
+            conflictCount++;
+        }
+
+        if (targetPath == sourcePath) {
+            continue;
+        }
+
+        if (fs::exists(targetPath)) {
             conflictCount++;
         }
     }
+
     return conflictCount;
 }
 
@@ -34,11 +50,19 @@ std::vector<RenameResult> RenameExecutor::execute(const std::vector<std::pair<Fi
         RenameResult result;
         result.oldPath = pair.first.path;
         result.newPath = pair.second;
-        
-        std::string fullNewPath = fs::path(pair.first.path).parent_path().string() + "/" + pair.second;
-        
+
+        const fs::path sourcePath(pair.first.path);
+        const fs::path targetPath = sourcePath.parent_path() / pair.second;
+
+        if (targetPath == sourcePath) {
+            result.success = true;
+            std::cout << "Skipped: " << pair.first.filename << " (name unchanged)" << std::endl;
+            results.push_back(result);
+            continue;
+        }
+
         try {
-            fs::rename(pair.first.path, fullNewPath);
+            fs::rename(sourcePath, targetPath);
             result.success = true;
             std::cout << "Renamed: " << pair.first.filename << " -> " << pair.second << std::endl;
         } catch (const fs::filesystem_error& ex) {
