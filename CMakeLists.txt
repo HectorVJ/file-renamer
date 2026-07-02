@@ -11,4 +11,5 @@ add_executable(file-renamer
     src/cli.cpp
     src/file_scanner.cpp
     src/file_filter.cpp
+    src/rename_rule.cpp
 )
