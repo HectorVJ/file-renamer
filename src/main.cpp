@@ -2,6 +2,8 @@
 #include "file_scanner.h"
 #include "file_filter.h"
 #include "rename_rule.h"
+#include "rename_executor.h"
+#include "report_writer.h"
 #include <iostream>
 #include <utility>
 
@@ -52,11 +54,43 @@ int main(int argc, char* argv[]) {
     rule.setReplaceTo(options.replaceTo);
     rule.setNumbering(options.enableNumbering, options.startNumber, options.numberWidth);
 
-    std::cout << "\nRename preview:" << std::endl;
+    std::vector<std::pair<FileEntry, std::string>> renamePairs;
     for (size_t i = 0; i < filteredFiles.size(); ++i) {
         std::string newName = rule.apply(filteredFiles[i].filename, filteredFiles[i].extension, i);
-        std::cout << "  " << filteredFiles[i].filename << " -> " << newName << std::endl;
+        renamePairs.push_back({filteredFiles[i], newName});
     }
+
+    RenameExecutor executor;
+    int conflicts = executor.detectConflicts(renamePairs);
+    std::cout << "Conflicts detected: " << conflicts << std::endl;
+
+    if (conflicts > 0 && options.executeMode) {
+        std::cout << "Warning: Skipping rename due to conflicts. Use --preview to check results." << std::endl;
+        return 1;
+    }
+
+    std::vector<RenameResult> results;
+    
+    if (options.previewMode) {
+        std::cout << "\nRename preview:" << std::endl;
+        for (const auto& pair : renamePairs) {
+            std::cout << "  " << pair.first.filename << " -> " << pair.second << std::endl;
+        }
+        results = executor.preview(renamePairs);
+    } else if (options.executeMode) {
+        std::cout << "\nExecuting rename:" << std::endl;
+        results = executor.execute(renamePairs);
+        int successCount = 0;
+        int failCount = 0;
+        for (const auto& r : results) {
+            if (r.success) successCount++;
+            else failCount++;
+        }
+        std::cout << "Rename completed. Success: " << successCount << ", Failed: " << failCount << std::endl;
+    }
+
+    ReportWriter writer;
+    writer.writeReport(results, "rename_report.md");
 
     return 0;
 }
