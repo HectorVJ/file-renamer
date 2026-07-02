@@ -1,5 +1,6 @@
 #include "cli.h"
 #include "file_scanner.h"
+#include "file_filter.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
@@ -27,6 +28,12 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "Scan completed. Total files found: " << files.size() << std::endl;
+
+    FileFilter filter;
+    filter.setExtensionFilter(options.extensionFilter);
+    std::vector<FileEntry> filteredFiles = filter.apply(files);
+    
+    std::cout << "Files after filter: " << filteredFiles.size() << std::endl;
 
     return 0;
 }

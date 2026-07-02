@@ -10,4 +10,5 @@ add_executable(file-renamer
     src/main.cpp
     src/cli.cpp
     src/file_scanner.cpp
+    src/file_filter.cpp
 )
