@@ -1,2 +1,2 @@
 Round 9: Prompt documentation
-Prompt: Document the round prompts under docs/prompts/round-01.txt through round-04.txt for assessment review.
+Prompt: Document the round prompts under docs/prompts/round-01.txt through round-04.txt for project review.
